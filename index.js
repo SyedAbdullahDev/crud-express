@@ -1,5 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 const User = require("./models/user-model.js");
 const Booking = require("./models/booking-schema.js");
 const Vendor = require("./models/vender-model.js");
@@ -8,14 +11,32 @@ const Worker = require("./models/worker-model.js");
 const Location = require("./models/location-model.js");
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Root Route
-app.get("/", (req, res) => {
-  res.send("Hello World from Node server");
+///////////////////// 🛡️ Security Middlewares 🛡️ /////////////////////
+app.use(helmet());
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// CORS Configuration
+const corsOptions = {
+  origin: [
+    "http://localhost:5001",
+    "https://crud-express-six.vercel.app"
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+// Rate Limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 1000
 });
-
+app.use("/api/", limiter);
 ///////////////////// ✅ USER ROUTES ✅ /////////////////////
 
 // Read All Users
