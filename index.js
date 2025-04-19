@@ -21,11 +21,12 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 const corsOptions = {
   origin: [
     "http://localhost:5001",
-    "https://crud-express-six.vercel.app"
+    "https://a2mvendor.vercel.app",
+    "https://crud-express-six.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
@@ -34,7 +35,7 @@ app.options("*", cors(corsOptions));
 // Rate Limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000
+  max: 1000,
 });
 app.use("/api/", limiter);
 ///////////////////// ✅ USER ROUTES ✅ /////////////////////
