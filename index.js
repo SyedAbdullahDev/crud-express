@@ -22,6 +22,7 @@ const corsOptions = {
   origin: [
     "http://localhost:5001",
     "https://a2mvendor.vercel.app",
+    "https://vendor.a2mserve.com",
     "https://crud-express-six.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
