@@ -3,10 +3,15 @@ const mongoose = require("mongoose");
 const BookingSchema = mongoose.Schema(
   {
     vendorname: { type: String, required: true },
+    vendorid: { type: String, required: true },
+    isapprove: { type: Boolean, required: true },
+
     price: { type: Number, required: true },
     username: { type: String, required: true },
     usermail: { type: String, required: true },
     adminmail: { type: String, required: true },
+    adminid: { type: String, required: true },
+
     orderno: { type: String, required: true, unique: true },
     category: { type: String, required: true },
     note: { type: String, required: false },
@@ -24,8 +29,8 @@ const BookingSchema = mongoose.Schema(
     noofthreesofa: { type: Number, default: 0 },
     carpets: [
       {
-        carpetlength: { type: Number,},
-        carpetwidth: { type: Number, },
+        carpetlength: { type: Number },
+        carpetwidth: { type: Number },
       },
     ],
   },
