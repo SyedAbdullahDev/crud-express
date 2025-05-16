@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 const corsOptions = {
   origin: [
     "http://localhost:5001",
+    "http://localhost:3000",
     "https://a2mvendor.vercel.app",
     "https://vendor.a2mserve.com",
     'https://admin.a2mserve.com',
