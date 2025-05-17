@@ -23,8 +23,8 @@ const corsOptions = {
     "http://localhost:3000",
     "https://a2mvendor.vercel.app",
     "https://vendor.a2mserve.com",
-    'https://admin.a2mserve.com',
-    'https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app',
+    "https://admin.a2mserve.com",
+    "https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app",
     "https://crud-express-six.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -32,7 +32,18 @@ const corsOptions = {
   optionsSuccessStatus: 204,
 };
 
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.options("*", cors(corsOptions));
 
 // Rate Limiting
