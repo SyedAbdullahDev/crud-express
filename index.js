@@ -18,33 +18,24 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // CORS Configuration
+const allowedOrigins = [
+  "http://localhost:3000",        // Local frontend
+  "https://your-frontend.vercel.app" // Deployed frontend
+];
+
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://a2mvendor.vercel.app",
-    "https://vendor.a2mserve.com",
-    "https://admin.a2mserve.com",
-    "https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app",
-    "https://crud-express-six.vercel.app",
-  ],
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed for this origin: " + origin));
+    }
+  },
   credentials: true,
-  optionsSuccessStatus: 204,
 };
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-app.options("*", cors(corsOptions));
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // optional but clean
 
 // Rate Limiting
 const limiter = rateLimit({
