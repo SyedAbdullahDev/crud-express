@@ -19,8 +19,9 @@ app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // CORS Configuration
 const allowedOrigins = [
-  "http://localhost:3000",        // Local frontend
-  "https://your-frontend.vercel.app" // Deployed frontend
+  "http://localhost:3000",
+  "https://your-frontend.vercel.app",
+  "https://crud-express-six.vercel.app",
 ];
 
 const corsOptions = {
