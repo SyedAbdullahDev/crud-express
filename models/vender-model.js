@@ -4,7 +4,7 @@ const VendorModel = mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Pease enter name"],
+      required: [true, "Please enter name"],
     },
     email: {
       type: String,
@@ -29,7 +29,6 @@ const VendorModel = mongoose.Schema(
       required: true,
       default: "Doha",
     },
-
     address: {
       type: Array,
       required: true,
@@ -43,17 +42,17 @@ const VendorModel = mongoose.Schema(
     revenue: {
       type: Number,
       required: true,
-      default: "0",
+      default: 0,
     },
     workers: {
       type: Number,
       required: true,
-      default: "1",
+      default: 1,
     },
     priceprhour: {
       type: Number,
       required: true,
-      default: "25",
+      default: 25,
     },
     membersince: {
       type: String,
@@ -63,10 +62,6 @@ const VendorModel = mongoose.Schema(
       type: Array,
       required: true,
       default: ['hourly'],
-    },
-    membersince: {
-      type: String,
-      required: true,
     },
     available: {
       type: String,
@@ -110,6 +105,74 @@ const VendorModel = mongoose.Schema(
       type: Boolean,
       required: true,
       default: false,
+    },
+    // New fields added below
+    crNumber: {
+      type: String,
+      required: false,
+      default: "Not Provided Yet",
+    },
+    crExpiryDate: {
+      type: Date,
+      required: false,
+    },
+    vatNumber: {
+      type: String,
+      required: false,
+      default: "Not Provided Yet",
+    },
+    area: {
+      type: String,
+      required: false,
+      default: "Not Specified",
+    },
+    municipality: {
+      type: String,
+      required: false,
+      default: "Not Specified",
+    },
+    zoneNumber: {
+      type: String,
+      required: false,
+      default: "Not Specified",
+    },
+    paymentMethod: {
+      type: String,
+      required: false,
+      default: "Not Specified",
+    },
+    lastPaymentDate: {
+      type: Date,
+      required: false,
+    },
+    documentOneExpiry: {
+      type: Date,
+      required: false,
+    },
+    documentTwoExpiry: {
+      type: Date,
+      required: false,
+    },
+    documentThreeExpiry: {
+      type: Date,
+      required: false,
+    },
+    companyDescription: {
+      type: String,
+      required: false,
+      default: "No description provided",
+    },
+    rating: {
+      type: Number,
+      required: false,
+      default: 0,
+      min: 0,
+      max: 5,
+    },
+    numberOfJobsCompleted: {
+      type: Number,
+      required: false,
+      default: 0,
     },
   },
   {
