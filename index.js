@@ -23,8 +23,8 @@ const corsOptions = {
     "http://localhost:5001",
     "https://a2mvendor.vercel.app",
     "https://vendor.a2mserve.com",
-    "https://admin.a2mserve.com",
-    "https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app",
+    'https://admin.a2mserve.com',
+    'https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app',
     "https://crud-express-six.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -396,7 +396,7 @@ app.delete("/api/locations/:id", async (req, res) => {
 });
 ///////////////////// ✅ MONGO DB CONNECTION ✅ /////////////////////
 const mongooseConnection = mongoose.connect(
-  "mongodb+srv://a2muser:a2m786%[40md@cluster0.xziea.mongodb.net](mailto:40md@cluster0.xziea.mongodb.net)/Node-API?retryWrites=true&w=majority&appName=Cluster0"
+  "mongodb+srv://a2muser:a2m786%40md@cluster0.xziea.mongodb.net/Node-API?retryWrites=true&w=majority&appName=Cluster0"
 );
 
 mongooseConnection
