@@ -1,184 +1,131 @@
 const mongoose = require("mongoose");
 
-const VendorModel = mongoose.Schema(
+const VendorSchema = new mongoose.Schema(
   {
-    name: {
+    // Company Information
+    companyName: {
       type: String,
-      required: [true, "Please enter name"],
+      required: [true, "Company name is required"],
     },
-    email: {
-      type: String,
-      required: [true, "Please enter email"],
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: [true, "Please enter password"],
-    },
-    phone: {
-      type: String,
-      unique: true,
-      required: [true, "Please enter phone number"],
-    },
-    image: {
-      type: String,
-      required: false,
-    },
-    city: {
-      type: String,
-      required: true,
-      default: "Doha",
-    },
-    address: {
-      type: Array,
-      required: true,
-      default: [],
-    },
-    services: {
-      type: Array,
-      required: true,
-      default: ["Cleaning", "Washing", "Ironing"],
-    },
-    revenue: {
+    commissionPercentage: {
       type: Number,
-      required: true,
-      default: 0,
+      default: 0
     },
-    workers: {
+
+    // Contact Information
+    mobileNumber: {
+      type: String,
+      required: [true, "Mobile number is required"],
+      unique: true
+    },
+    whatsappNumber: {
+      type: String,
+      required: [true, "WhatsApp number is required"]
+    },
+
+    // Services Information
+    servicesCategory: {
+      type: [String],
+      required: [true, "At least one service category is required"],
+      enum: ["Hourly Clean", "Sofa and Carpet Cleaning"]
+    },
+    servicesHourly: {
+      type: [String],
+      required: [true, "At least one hourly service is required"],
+      enum: ["Cleaning", "Ironing", "Washing Dishes", "Baby Sitting"]
+    },
+    pricePerHour: {
       type: Number,
-      required: true,
-      default: 1,
+      required: [true, "Price per hour is required"],
+      min: 0
     },
-    priceprhour: {
+    numberOfWorkers: {
       type: Number,
-      required: true,
-      default: 25,
+      required: [true, "Number of workers is required"],
+      min: 1
     },
-    membersince: {
+
+    // Working Hours
+    openingTime: {
       type: String,
-      required: true,
+      required: [true, "Opening time is required"]
     },
-    maincategory: {
-      type: Array,
-      required: true,
-      default: ['hourly'],
-    },
-    available: {
+    closingTime: {
       type: String,
-      required: false,
-      default: "Monday - Sunday",
+      required: [true, "Closing time is required"]
     },
-    timingone: {
+
+    // Address Information
+    companyLocation: {
       type: String,
-      required: true,
+      required: [true, "Company location is required"],
+      enum: ["Najma - Zone 26", "Al Mansoura - Zone 15", "Al Sadd - Zone 18"]
     },
-    timingtwo: {
+    buildingNumber: {
       type: String,
-      required: true,
+      required: [true, "Building number is required"]
     },
-    documentone: {
+    streetNumber: {
       type: String,
-      required: false,
-      default: "Not Provided Yet",
+      required: [true, "Street number is required"]
     },
-    documenttwo: {
+    poBoxNumber: {
       type: String,
-      required: false,
-      default: "Not Provided Yet",
+      required: [true, "PO Box number is required"]
     },
-    documentthree: {
-      type: String,
-      required: false,
-      default: "Not Provided Yet",
+    serviceLocations: {
+      type: [String],
+      required: [true, "At least one service location is required"]
     },
-    Adminid: {
-      type: String,
-      required: true,
-      default: "Random admin",
-    },
-    hasmaterial: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
-    isactive: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    // New fields added below
+
+    // CR Details
     crNumber: {
       type: String,
-      required: false,
-      default: "Not Provided Yet",
+      required: [true, "CR number is required"]
     },
     crExpiryDate: {
       type: Date,
-      required: false,
+      required: [true, "CR expiry date is required"]
     },
-    vatNumber: {
+    crDocument: {
       type: String,
-      required: false,
-      default: "Not Provided Yet",
+      required: [true, "CR document is required"]
     },
-    area: {
+
+    // Owner ID Details
+    ownerIdNumber: {
       type: String,
-      required: false,
-      default: "Not Specified",
+      required: [true, "Owner ID number is required"]
     },
-    municipality: {
-      type: String,
-      required: false,
-      default: "Not Specified",
-    },
-    zoneNumber: {
-      type: String,
-      required: false,
-      default: "Not Specified",
-    },
-    paymentMethod: {
-      type: String,
-      required: false,
-      default: "Not Specified",
-    },
-    lastPaymentDate: {
+    ownerIdExpiryDate: {
       type: Date,
-      required: false,
+      required: [true, "Owner ID expiry date is required"]
     },
-    documentOneExpiry: {
-      type: Date,
-      required: false,
-    },
-    documentTwoExpiry: {
-      type: Date,
-      required: false,
-    },
-    documentThreeExpiry: {
-      type: Date,
-      required: false,
-    },
-    companyDescription: {
+    ownerIdDocument: {
       type: String,
-      required: false,
-      default: "No description provided",
+      required: [true, "Owner ID document is required"]
     },
-    rating: {
-      type: Number,
-      required: false,
-      default: 0,
-      min: 0,
-      max: 5,
+
+    // Settings
+    cleaningMaterialRequired: {
+      type: Boolean,
+      default: false
     },
-    numberOfJobsCompleted: {
-      type: Number,
-      required: false,
-      default: 0,
+    vacuum: {
+      type: Boolean,
+      default: false
     },
+    status: {
+      type: String,
+      required: [true, "Status is required"],
+      enum: ["Pending Approval", "Active", "Suspended", "Blocked"],
+      default: "Pending Approval"
+    }
   },
   {
-    timestamps: true,
+    timestamps: true
   }
 );
 
-const Vendor = mongoose.model("Vendor", VendorModel);
+const Vendor = mongoose.model("Vendor", VendorSchema);
 module.exports = Vendor;
