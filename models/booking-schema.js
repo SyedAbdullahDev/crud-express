@@ -1,6 +1,17 @@
 const mongoose = require("mongoose");
 
-const BookingSchema = mongoose.Schema(
+const addressSchema = new mongoose.Schema(
+  {
+    street: String,
+    city: String,
+    state: String,
+    zip: String,
+    isPrimary: Boolean,
+  },
+  { _id: false }
+);
+
+const bookingSchema = new mongoose.Schema(
   {
     customer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -10,10 +21,6 @@ const BookingSchema = mongoose.Schema(
     vendor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Vendor",
-      required: true,
-    },
-    address: {
-      type: String,
       required: true,
     },
     date: {
@@ -27,33 +34,15 @@ const BookingSchema = mongoose.Schema(
     },
     details: {
       hourlyCleaning: {
-        numberOfCleaners: {
-          type: Number,
-          default: 1,
-        },
-        numberOfHours: {
-          type: Number,
-          default: 1,
-        },
+        numberOfCleaners: Number,
+        numberOfHours: Number,
         services: [String],
       },
       sofaCarpetCleaning: {
-        oneSeater: {
-          type: Number,
-          default: 0,
-        },
-        twoSeater: {
-          type: Number,
-          default: 0,
-        },
-        threeSeater: {
-          type: Number,
-          default: 0,
-        },
-        carpetSqft: {
-          type: Number,
-          default: 0,
-        },
+        oneSeater: Number,
+        twoSeater: Number,
+        threeSeater: Number,
+        carpetSqft: Number,
       },
     },
     paymentMethod: {
@@ -70,28 +59,13 @@ const BookingSchema = mongoose.Schema(
       type: Number,
       required: true,
     },
+    address: {
+      type: addressSchema,
+      required: true,
+    },
   },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  }
+  { timestamps: true }
 );
 
-// Add virtual population
-BookingSchema.virtual("user", {
-  ref: "User",
-  localField: "customer",
-  foreignField: "_id",
-  justOne: true,
-});
-
-BookingSchema.virtual("vendorDetails", {
-  ref: "Vendor",
-  localField: "vendor",
-  foreignField: "_id",
-  justOne: true,
-});
-
-const Booking = mongoose.model("Booking", BookingSchema);
+const Booking = mongoose.model("Booking", bookingSchema);
 module.exports = Booking;
