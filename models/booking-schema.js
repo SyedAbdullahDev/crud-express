@@ -2,40 +2,96 @@ const mongoose = require("mongoose");
 
 const BookingSchema = mongoose.Schema(
   {
-    vendorname: { type: String, required: true },
-    vendorid: { type: String, required: true },
-    isapprove: { type: Boolean, required: true },
-
-    price: { type: Number, required: true },
-    username: { type: String, required: true },
-    usermail: { type: String, required: true },
-    adminmail: { type: String, required: true },
-    adminid: { type: String, required: true },
-
-    orderno: { type: String, required: true, unique: true },
-    category: { type: String, required: true },
-    note: { type: String, required: false },
-    requiretool: { type: Boolean, required: true, default: false },
-    address: { type: String, required: true },
-    worker: { type: Number, required: true, default: 1 },
-    city: { type: String, required: true },
-    paymentmethod: { type: String, required: true },
-    date: { type: Date, required: true },
-    durationinminutes: { type: Number, required: true },
-    services: { type: [String], required: true },
-    usernumber: { type: String, required: true },
-    noofonesofa: { type: Number, default: 0 },
-    nooftwosofa: { type: Number, default: 0 },
-    noofthreesofa: { type: Number, default: 0 },
-    carpets: [
-      {
-        carpetlength: { type: Number },
-        carpetwidth: { type: Number },
+    customer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    vendor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Vendor",
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    serviceType: {
+      type: String,
+      enum: ["Hourly Cleaning", "Sofa and Carpet Cleaning"],
+      required: true,
+    },
+    details: {
+      hourlyCleaning: {
+        numberOfCleaners: {
+          type: Number,
+          default: 1,
+        },
+        numberOfHours: {
+          type: Number,
+          default: 1,
+        },
+        services: [String],
       },
-    ],
+      sofaCarpetCleaning: {
+        oneSeater: {
+          type: Number,
+          default: 0,
+        },
+        twoSeater: {
+          type: Number,
+          default: 0,
+        },
+        threeSeater: {
+          type: Number,
+          default: 0,
+        },
+        carpetSqft: {
+          type: Number,
+          default: 0,
+        },
+      },
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["Cash", "Card/Online", "Wallet", "Wallet + Cash", "Wallet + Card"],
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["Pending Approval", "Approved", "Confirmed", "Cancelled"],
+      default: "Pending Approval",
+    },
+    total: {
+      type: Number,
+      required: true,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+// Add virtual population
+BookingSchema.virtual("user", {
+  ref: "User",
+  localField: "customer",
+  foreignField: "_id",
+  justOne: true,
+});
+
+BookingSchema.virtual("vendorDetails", {
+  ref: "Vendor",
+  localField: "vendor",
+  foreignField: "_id",
+  justOne: true,
+});
 
 const Booking = mongoose.model("Booking", BookingSchema);
 module.exports = Booking;
