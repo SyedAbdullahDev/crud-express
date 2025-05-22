@@ -9,7 +9,7 @@ const Vendor = require("./models/vender-model.js");
 const Admin = require("./models/admin-model.js");
 const Worker = require("./models/worker-model.js");
 const Location = require("./models/location-model.js");
-
+const Muncipality = require("./models/muncipality-model.js");
 const app = express();
 
 ///////////////////// 🛡️ Security Middlewares 🛡️ /////////////////////
@@ -23,8 +23,8 @@ const corsOptions = {
     "http://localhost:5001",
     "https://a2mvendor.vercel.app",
     "https://vendor.a2mserve.com",
-    'https://admin.a2mserve.com',
-    'https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app',
+    "https://admin.a2mserve.com",
+    "https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app",
     "https://crud-express-six.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -390,6 +390,68 @@ app.delete("/api/locations/:id", async (req, res) => {
     if (!location)
       return res.status(404).json({ message: "Location not found" });
     res.status(200).json({ message: "Location deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+///////////////////// ✅ MUNCIPALITY ROUTES ✅ /////////////////////
+
+// Read All Muncipalities
+app.get("/api/muncipalities", async (req, res) => {
+  try {
+    const muncipalities = await Muncipality.find({});
+    res.status(200).json(muncipalities);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Read Single Muncipality
+app.get("/api/muncipalities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const muncipality = await Muncipality.findById(id);
+    if (!muncipality)
+      return res.status(404).json({ message: "Muncipality not found" });
+    res.status(200).json(muncipality);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Create Muncipality
+app.post("/api/muncipalities", async (req, res) => {
+  try {
+    const muncipality = await Muncipality.create(req.body);
+    res.status(201).json(muncipality);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update Muncipality
+app.put("/api/muncipalities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const muncipality = await Muncipality.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!muncipality)
+      return res.status(404).json({ message: "Muncipality not found" });
+    res.status(200).json(muncipality);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Delete Muncipality
+app.delete("/api/muncipalities/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const muncipality = await Muncipality.findByIdAndDelete(id);
+    if (!muncipality)
+      return res.status(404).json({ message: "Muncipality not found" });
+    res.status(200).json({ message: "Muncipality deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

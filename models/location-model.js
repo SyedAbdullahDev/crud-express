@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const LocationSchema = mongoose.Schema(
   {
-    adminid: { type: String, required: true },
-    city: { type: String, required: true },
-    area: { type: String, required: true },
-    subarea: { type: String, required: true },
-    zipcode: { type: String, required: true },
+    locationid: { type: String, required: true },
+    zonenumber: { type: String, required: true },
+    muncipality: { type: String, required: true },
+    Latitude: { type: String, required: true, unique: true },
+    Longitude: { type: String, required: true, unique: true },
   },
   { timestamps: true }
 );
