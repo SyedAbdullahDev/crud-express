@@ -26,6 +26,7 @@ const corsOptions = {
     "https://admin.a2mserve.com",
     "https://a2madmin-ikbx-git-master-a2m-serves-projects.vercel.app",
     "https://crud-express-six.vercel.app",
+    "https://a2m-admin.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
