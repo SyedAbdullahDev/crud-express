@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const User = require("./models/user-model.js");
 const Booking = require("./models/booking-schema.js");
+const crypto = require("crypto");
 const Vendor = require("./models/vender-model.js");
 const Admin = require("./models/admin-model.js");
 const Worker = require("./models/worker-model.js");
@@ -457,6 +458,75 @@ app.delete("/api/muncipalities/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+///////////////////// ✅ PAYMENT CALLBACK ✅ /////////////////////
+app.post("/api/payment/callback", async (req, res) => {
+  try {
+    const {
+      website_ref_no,       // booking/order ID (your reference number)
+      transaction_status,   // 1=in progress, 2=failed, 3=success
+      transaction_number,   // Sadad transaction ID
+      RESPCODE,             // Response code (1 = success)
+      RESPMSG,              // Response message
+      ORDERID,              // Booking/order ID again
+      STATUS,               // TXN_SUCCESS | TXN_FAILED
+      TXNAMOUNT,            // Amount paid
+      checksumhash          // signature from Sadad
+    } = req.body;
+
+    console.log("Callback received:", req.body);
+
+    ///////////////////// 🔑 VERIFY CHECKSUM /////////////////////
+    const secretKey = process.env.SADAD_SECRET_KEY; // put your key in .env
+    // Build string in correct order (Sadad docs should define exact order)
+    const rawString = `${ORDERID}|${TXNAMOUNT}|${STATUS}|${secretKey}`;
+    const calculatedChecksum = crypto
+      .createHash("sha256")
+      .update(rawString)
+      .digest("hex");
+
+    if (calculatedChecksum !== checksumhash) {
+      console.error("❌ Invalid checksum");
+      return res.status(400).json({ message: "Invalid checksum" });
+    }
+    console.log("✅ Valid checksum");
+
+    ///////////////////// ✅ PROCESS BOOKING /////////////////////
+    if ((transaction_status == 3 || STATUS === "TXN_SUCCESS") && RESPCODE == "1") {
+      // Success → confirm booking
+      const booking = await Booking.findByIdAndUpdate(
+        website_ref_no || ORDERID,
+        {
+          status: "Confirmed",
+          paymentMethod: "Card/Online",
+          transactionId: transaction_number,
+          paymentResponse: req.body,
+        },
+        { new: true }
+      );
+
+      if (!booking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+
+      console.log("Booking confirmed:", booking._id);
+      return res.status(200).json({ message: "Booking confirmed", booking });
+    } else {
+      // Failed → mark as failed/cancelled
+      await Booking.findByIdAndUpdate(website_ref_no || ORDERID, {
+        status: "Cancelled",
+        paymentResponse: req.body,
+      });
+
+      return res.status(200).json({ message: "Payment failed" });
+    }
+  } catch (error) {
+    console.error("Callback error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 ///////////////////// ✅ MONGO DB CONNECTION ✅ /////////////////////
 const mongooseConnection = mongoose.connect(
   "mongodb+srv://a2muser:a2m786%40md@cluster0.xziea.mongodb.net/Node-API?retryWrites=true&w=majority&appName=Cluster0"
