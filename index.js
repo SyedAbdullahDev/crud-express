@@ -478,8 +478,7 @@ app.post("/api/payment/callback", async (req, res) => {
     console.log("Callback received:", req.body);
 
     ///////////////////// 🔑 VERIFY CHECKSUM /////////////////////
-    const secretKey = process.env.SADAD_SECRET_KEY; // put your key in .env
-    // Build string in correct order (Sadad docs should define exact order)
+    const secretKey = 'JakwuZ3ZyxOWK98U'; 
     const rawString = `${ORDERID}|${TXNAMOUNT}|${STATUS}|${secretKey}`;
     const calculatedChecksum = crypto
       .createHash("sha256")
