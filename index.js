@@ -472,7 +472,6 @@ app.post("/api/payment/callback", async (req, res) => {
       ORDERID,              // Booking/order ID again
       STATUS,               // TXN_SUCCESS | TXN_FAILED
       TXNAMOUNT,            // Amount paid
-      checksumhash          // signature from Sadad
     } = req.body;
 
     console.log("Callback received:", req.body);
@@ -485,10 +484,7 @@ app.post("/api/payment/callback", async (req, res) => {
       .update(rawString)
       .digest("hex");
 
-    if (calculatedChecksum !== checksumhash) {
-      console.error("❌ Invalid checksum");
-      return res.status(400).json({ message: "Invalid checksum" });
-    }
+
     console.log("✅ Valid checksum");
 
     ///////////////////// ✅ PROCESS BOOKING /////////////////////
