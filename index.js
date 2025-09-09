@@ -459,36 +459,28 @@ app.delete("/api/muncipalities/:id", async (req, res) => {
   }
 });
 
-
 ///////////////////// ✅ PAYMENT CALLBACK ✅ /////////////////////
+// ✅ Payment Callback (Sadad will call this via POST)
 app.post("/api/payment/callback", async (req, res) => {
   try {
     const {
-      website_ref_no,       // booking/order ID (your reference number)
-      transaction_status,   // 1=in progress, 2=failed, 3=success
-      transaction_number,   // Sadad transaction ID
-      RESPCODE,             // Response code (1 = success)
-      RESPMSG,              // Response message
-      ORDERID,              // Booking/order ID again
-      STATUS,               // TXN_SUCCESS | TXN_FAILED
-      TXNAMOUNT,            // Amount paid
+      website_ref_no, // booking/order ID
+      transaction_status, // 1=in progress, 2=failed, 3=success
+      transaction_number, // Sadad transaction ID
+      RESPCODE, // Response code (1 = success)
+      RESPMSG, // Response message
+      ORDERID, // Booking/order ID again
+      STATUS, // TXN_SUCCESS | TXN_FAILED
+      TXNAMOUNT, // Amount paid
     } = req.body;
 
     console.log("Callback received:", req.body);
 
-    ///////////////////// 🔑 VERIFY CHECKSUM /////////////////////
-    const secretKey = 'JakwuZ3ZyxOWK98U'; 
-    const rawString = `${ORDERID}|${TXNAMOUNT}|${STATUS}|${secretKey}`;
-    const calculatedChecksum = crypto
-      .createHash("sha256")
-      .update(rawString)
-      .digest("hex");
-
-
-    console.log("✅ Valid checksum");
-
     ///////////////////// ✅ PROCESS BOOKING /////////////////////
-    if ((transaction_status == 3 || STATUS === "TXN_SUCCESS") && RESPCODE == "1") {
+    if (
+      (transaction_status == 3 || STATUS === "TXN_SUCCESS") &&
+      RESPCODE == "1"
+    ) {
       // Success → confirm booking
       const booking = await Booking.findByIdAndUpdate(
         website_ref_no || ORDERID,
@@ -518,6 +510,30 @@ app.post("/api/payment/callback", async (req, res) => {
     }
   } catch (error) {
     console.error("Callback error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// ✅ New GET route for testing / manual lookup
+app.get("/api/payment/callback", async (req, res) => {
+  try {
+    const { bookingId } = req.query; // ?bookingId=xxxx
+
+    if (!bookingId) {
+      return res
+        .status(200)
+        .json({ message: "No bookingId provided", booking: null });
+    }
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    return res.status(200).json({ message: "Booking found", booking });
+  } catch (error) {
+    console.error("GET callback error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
